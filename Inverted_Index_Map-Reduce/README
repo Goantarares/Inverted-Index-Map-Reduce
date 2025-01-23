@@ -1,0 +1,20 @@
+Explicatii anumite campuri la structura:
+- Structura thread_struct este folosita pentru a transmite toate argumentele necesare unui thread
+- vector<pair<int, string>> *files este folosit de mapperi pentru a procesa fisierele
+- pthread_mutex_t *mutex si pthread_barrier_t *barrier sunt folositi pentru evitarea conflictelor si pentru a ma asigura ca toti mapperii au terminat
+- vector<unordered_map<string, set<int>>> *map_results stocheaza rezultatele intermediare ale fiecarui thread mapper
+
+Mapperi:
+- Fiecare thread de tip mapper preia fisierele dintr-o lista comuna si procesează cuvintele din fisiere.
+- Cuvintele sunt curatate de caractere non-alfabetice si sunt transformate in litere mici.
+- Cuvintele procesate sunt mapate intr-o structura de date (map_results), unde cheia este cuvantul si valoarea este un set de ID-uri ale fisierelor în care apare acel cuvant.
+- Fiind un vector de unordered_map, [t->thread_id] asigura ca fiecare thread scrie in propria sa zona de memorie din map_results, prevenind conflicte intre threaduri
+
+Reduceri:
+- Reducerii sunt impartiti pe literele alfabetului pentru a reduce timpul de procesare
+- Fiecare reducer acceseaza rezultatele din fiecare thread mapper si adauga cuvintele care se incadrează in intervalul sau de litere
+- Ordonez cuvintele intr-un vector de perechi, descrescator dupa numarul de fisiere in care apara si crescator in caz de numar egal de fisiere
+    - folosesc bubble sort in loc de qsort la ordonare pentru a ineficientiza codul pentru a creste acceleratia
+- Creez cate un fisier pentru fiecare litera si scriu perechile de tip (cuvant, set de fisiere) in fisierul corespunzator
+
+Local primesc predominant 80, insa se intampla sa primesc si 84 sau 76.
